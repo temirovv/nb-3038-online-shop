@@ -1,0 +1,537 @@
+<style>
+  :root {
+    --ground: #faf7f8;
+    --surface: #ffffff;
+    --surface-2: #fbf6f8;
+    --ink: #2a2230;
+    --muted: #8c7f88;
+    --faint: #b6a9b1;
+    --border: #ece1e8;
+    --border-strong: #ddccd6;
+    --accent: #c0396b;
+    --accent-weak: #f7e6ee;
+    --accent-line: #d98bab;
+    --pk: #9a6b12;
+    --pk-weak: #f6ecd6;
+    --uniq: #2f7d72;
+    --uniq-weak: #dcefeb;
+    --xapp: #6b4bce;
+    --xapp-weak: #ece6fa;
+    --ok: #2f8f5b;
+    --shadow: 0 1px 2px rgba(42,34,48,.04), 0 8px 24px -12px rgba(42,34,48,.14);
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", "Consolas", monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #16121a; --surface: #201a25; --surface-2: #241d29;
+      --ink: #efe6ec; --muted: #a595a0; --faint: #6f6270;
+      --border: #352c3b; --border-strong: #443a4b;
+      --accent: #ea6d9b; --accent-weak: #3a2130; --accent-line: #8a5570;
+      --pk: #d7ab5a; --pk-weak: #3a3020; --uniq: #6fc7ba; --uniq-weak: #1f3a36;
+      --xapp: #b49aff; --xapp-weak: #2c2340; --ok: #5cc088;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="light"] {
+    --ground: #faf7f8; --surface: #ffffff; --surface-2: #fbf6f8;
+    --ink: #2a2230; --muted: #8c7f88; --faint: #b6a9b1;
+    --border: #ece1e8; --border-strong: #ddccd6;
+    --accent: #c0396b; --accent-weak: #f7e6ee; --accent-line: #d98bab;
+    --pk: #9a6b12; --pk-weak: #f6ecd6; --uniq: #2f7d72; --uniq-weak: #dcefeb;
+    --xapp: #6b4bce; --xapp-weak: #ece6fa; --ok: #2f8f5b;
+    --shadow: 0 1px 2px rgba(42,34,48,.04), 0 8px 24px -12px rgba(42,34,48,.14);
+  }
+  :root[data-theme="dark"] {
+    --ground: #16121a; --surface: #201a25; --surface-2: #241d29;
+    --ink: #efe6ec; --muted: #a595a0; --faint: #6f6270;
+    --border: #352c3b; --border-strong: #443a4b;
+    --accent: #ea6d9b; --accent-weak: #3a2130; --accent-line: #8a5570;
+    --pk: #d7ab5a; --pk-weak: #3a3020; --uniq: #6fc7ba; --uniq-weak: #1f3a36;
+    --xapp: #b49aff; --xapp-weak: #2c2340; --ok: #5cc088;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.6);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .page {
+    background: var(--ground); color: var(--ink);
+    font-family: var(--sans); line-height: 1.5; min-height: 100vh;
+    padding: clamp(20px, 4vw, 56px) clamp(16px, 4vw, 40px) 72px;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--accent); margin: 0 0 12px;
+  }
+  h1 {
+    font-family: var(--serif); font-weight: 600;
+    font-size: clamp(30px, 5vw, 46px); line-height: 1.05;
+    letter-spacing: -.01em; margin: 0 0 14px; text-wrap: balance;
+  }
+  h1 em { color: var(--accent); font-style: italic; }
+  .lede { font-size: 16px; color: var(--muted); max-width: 64ch; margin: 0 0 24px; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px 10px; margin: 0 0 40px; }
+  .chip {
+    font-family: var(--mono); font-size: 12px; padding: 5px 11px; border-radius: 999px;
+    background: var(--surface); border: 1px solid var(--border); color: var(--muted);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .chip b { color: var(--ink); font-weight: 600; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+  .dot.ok { background: var(--ok); }
+  .dot.bp { background: transparent; border: 1.5px dashed var(--accent); }
+
+  .sec-head {
+    display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+    margin: 52px 0 10px; padding-bottom: 12px; border-bottom: 1px solid var(--border);
+  }
+  .sec-head h2 { font-family: var(--serif); font-weight: 600; font-size: 22px; margin: 0; letter-spacing: -.01em; }
+  .sec-head .count { font-family: var(--mono); font-size: 12px; color: var(--faint); }
+  .sec-intro { font-size: 14px; color: var(--muted); margin: 0 0 20px; max-width: 70ch; }
+
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 16px 24px;
+    padding: 16px 18px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; box-shadow: var(--shadow);
+  }
+  .legend-item { display: flex; align-items: center; gap: 9px; font-size: 13px; color: var(--muted); }
+  .badge {
+    font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: .04em;
+    padding: 2px 6px; border-radius: 5px; line-height: 1.4;
+  }
+  .badge.pk { background: var(--pk-weak); color: var(--pk); }
+  .badge.fk { background: var(--accent-weak); color: var(--accent); }
+  .badge.uq { background: var(--uniq-weak); color: var(--uniq); }
+  .badge.xa { background: var(--xapp-weak); color: var(--xapp); }
+  .badge.nl { background: transparent; color: var(--faint); border: 1px solid var(--border-strong); }
+
+  /* architecture map */
+  .map-scroll {
+    overflow-x: auto; border: 1px solid var(--border); border-radius: 16px;
+    background: radial-gradient(circle at 1px 1px, var(--border) 1px, transparent 0) 0 0 / 22px 22px, var(--surface);
+    box-shadow: var(--shadow); padding: 8px;
+  }
+  .map-scroll svg { display: block; min-width: 780px; width: 100%; height: auto; }
+  .abox { fill: var(--surface); stroke: var(--border-strong); stroke-width: 1.5; }
+  .abox.faol { fill: var(--accent-weak); stroke: var(--accent); stroke-width: 2; }
+  .abox.bp { stroke-dasharray: 3 4; }
+  .a-name { font-family: var(--sans); font-weight: 700; font-size: 15px; fill: var(--ink); }
+  .a-tbl { font-family: var(--mono); font-size: 10.5px; fill: var(--muted); }
+  .a-tag { font-family: var(--mono); font-size: 9px; letter-spacing: .08em; }
+  .a-tag.faol { fill: var(--ok); }
+  .a-tag.bp { fill: var(--accent); }
+  .arrow { fill: none; stroke: var(--accent-line); stroke-width: 1.8; opacity: .85; }
+  .arrow-lbl { font-family: var(--mono); font-size: 10px; fill: var(--xapp); font-weight: 600; }
+  .map-cap { font-size: 12.5px; color: var(--muted); margin: 12px 2px 0; font-family: var(--mono); }
+
+  /* app group */
+  .app-group { margin-top: 26px; }
+  .app-group-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    margin-bottom: 14px;
+  }
+  .agh-left { display: flex; align-items: baseline; gap: 10px; }
+  .agh-name { font-family: var(--mono); font-size: 16px; font-weight: 700; color: var(--ink); }
+  .agh-uz { font-size: 13px; color: var(--muted); }
+  .status-pill {
+    font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .04em;
+    padding: 5px 11px; border-radius: 999px; display: inline-flex; align-items: center; gap: 7px;
+  }
+  .status-pill.faol { background: color-mix(in srgb, var(--ok) 14%, transparent); color: var(--ok); }
+  .status-pill.bp { border: 1.5px dashed var(--accent); color: var(--accent); }
+  .status-pill .sd { width: 7px; height: 7px; border-radius: 50%; }
+  .status-pill.faol .sd { background: var(--ok); }
+  .status-pill.bp .sd { border: 1.5px dashed var(--accent); }
+
+  .grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 18px; align-items: start;
+  }
+  .entity {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; overflow: hidden; box-shadow: var(--shadow);
+  }
+  .entity.bp { border-style: dashed; border-color: var(--border-strong); }
+  .entity-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 13px 16px; background: var(--surface-2); border-bottom: 1px solid var(--border);
+  }
+  .entity.bp .entity-head { border-bottom-style: dashed; }
+  .entity-head .titles { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .entity-head .en { font-family: var(--serif); font-weight: 600; font-size: 17px; }
+  .entity-head .tbl { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .entity-head .tag {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .05em; text-transform: uppercase;
+    padding: 4px 8px; border-radius: 6px; white-space: nowrap; flex-shrink: 0;
+  }
+  .entity-head .tag.faol { color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, transparent); }
+  .entity-head .tag.bp { color: var(--accent); border: 1px dashed var(--accent); }
+  .fields { display: flex; flex-direction: column; }
+  .field {
+    display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px;
+    padding: 8px 16px; border-top: 1px solid var(--border); font-size: 13px;
+  }
+  .field:first-child { border-top: none; }
+  .field.is-key { background: color-mix(in srgb, var(--accent-weak) 45%, transparent); }
+  .field .fname { font-family: var(--mono); font-size: 12.5px; color: var(--ink); overflow-wrap: anywhere; }
+  .field .fname.key { font-weight: 600; }
+  .field .ftype { font-family: var(--mono); font-size: 11px; color: var(--muted); text-align: right; }
+  .field .keys { display: inline-flex; gap: 4px; margin-left: 7px; vertical-align: middle; }
+  .field .ref { display: block; font-family: var(--mono); font-size: 10.5px; color: var(--accent); margin-top: 3px; }
+  .field .ref.xa { color: var(--xapp); }
+  .field .note { display: block; font-size: 11px; color: var(--muted); margin-top: 3px; font-style: italic; }
+  .field .right { display: flex; align-items: center; gap: 6px; justify-self: end; }
+
+  .planned-note {
+    margin-top: 26px; padding: 18px 20px; background: var(--surface);
+    border: 1px solid var(--border); border-left: 3px solid var(--accent);
+    border-radius: 12px; font-size: 13.5px; color: var(--muted);
+  }
+  .planned-note b { color: var(--ink); font-weight: 600; }
+  .planned-note code {
+    font-family: var(--mono); font-size: 12px; background: var(--surface-2);
+    padding: 1px 6px; border-radius: 5px; color: var(--ink);
+  }
+
+  footer {
+    margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--border);
+    font-family: var(--mono); font-size: 12px; color: var(--faint);
+    display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: space-between;
+  }
+</style>
+
+<div class="page">
+  <div class="wrap">
+
+    <p class="eyebrow">Online Shop · To'liq sxema (blueprint)</p>
+    <h1>Do'kon bazasining <em>to'liq diagrammasi</em></h1>
+    <p class="lede">
+      11 ta jadvalning maqsad sxemasi. <b>products</b> allaqachon qurilgan (FAOL) — namuna.
+      Qolgan 6 jadval <b>blueprint</b>: o'quvchilar shu diagrammaga qarab modellarni yozishadi.
+      Diqqat markazida — ilovalararo (cross-app) bog'lanishlar.
+    </p>
+    <div class="meta">
+      <span class="chip"><span class="dot"></span><b>SQLite</b></span>
+      <span class="chip"><b>11</b> jadval</span>
+      <span class="chip"><span class="dot ok"></span><b>5</b> faol · products</span>
+      <span class="chip"><span class="dot bp"></span><b>6</b> blueprint</span>
+      <span class="chip"><b>13</b> bog'lanish · <b>4</b> cross-app</span>
+    </div>
+
+    <div class="legend">
+      <span class="legend-item"><span class="badge pk">PK</span> Asosiy kalit</span>
+      <span class="legend-item"><span class="badge fk">FK</span> Tashqi kalit</span>
+      <span class="legend-item"><span class="badge xa">X-APP</span> Ilovalararo FK</span>
+      <span class="legend-item"><span class="badge uq">UNIQUE</span> Yagona qiymat</span>
+      <span class="legend-item"><span class="badge nl">NULL</span> Bo'sh bo'lishi mumkin</span>
+      <span class="legend-item"><span class="dot ok"></span> FAOL (qurilgan)</span>
+      <span class="legend-item"><span class="dot bp"></span> BLUEPRINT (yoziladi)</span>
+    </div>
+
+    <!-- Architecture map -->
+    <div class="sec-head">
+      <h2>Ilovalar arxitekturasi</h2>
+      <span class="count">o'q A → B: A ilova B ga bog'liq (FK)</span>
+    </div>
+    <div class="map-scroll">
+      <svg viewBox="0 0 900 480" role="img" aria-label="5 ilova o'rtasidagi bog'liqlik diagrammasi">
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent-line)" />
+          </marker>
+        </defs>
+
+        <!-- arrows (consumer -> provider) -->
+        <path class="arrow" marker-end="url(#ah)" d="M 165 120 L 165 212" />
+        <text class="arrow-lbl" x="172" y="172">user · O2O</text>
+
+        <path class="arrow" marker-end="url(#ah)" d="M 236 120 C 300 220, 320 300, 372 352" />
+        <text class="arrow-lbl" x="255" y="250">product</text>
+
+        <path class="arrow" marker-end="url(#ah)" d="M 205 294 C 300 342, 345 350, 404 356" />
+        <text class="arrow-lbl" x="214" y="336">product</text>
+
+        <path class="arrow" marker-end="url(#ah)" d="M 556 176 C 440 150, 330 214, 266 236" />
+        <text class="arrow-lbl" x="392" y="166">user</text>
+
+        <path class="arrow" marker-end="url(#ah)" d="M 604 230 C 570 300, 545 330, 516 352" />
+        <text class="arrow-lbl" x="556" y="300">product</text>
+
+        <path class="arrow" marker-end="url(#ah)" d="M 704 230 C 720 290, 728 322, 738 352" />
+        <text class="arrow-lbl" x="712" y="300">delivery_zone</text>
+
+        <!-- app boxes -->
+        <!-- cart -->
+        <rect class="abox bp" x="70" y="42" width="190" height="78" rx="12" />
+        <text class="a-name" x="86" y="72">cart</text>
+        <text class="a-tag bp" x="86" y="90">BLUEPRINT</text>
+        <text class="a-tbl" x="86" y="108">Cart · CartItem</text>
+        <!-- users -->
+        <rect class="abox bp" x="70" y="214" width="190" height="78" rx="12" />
+        <text class="a-name" x="86" y="244">users</text>
+        <text class="a-tag bp" x="86" y="262">BLUEPRINT</text>
+        <text class="a-tbl" x="86" y="280">TelegramUser · Favorite</text>
+        <!-- orders -->
+        <rect class="abox bp" x="556" y="150" width="214" height="80" rx="12" />
+        <text class="a-name" x="574" y="181">orders</text>
+        <text class="a-tag bp" x="574" y="199">BLUEPRINT</text>
+        <text class="a-tbl" x="574" y="217">Order · OrderItem</text>
+        <!-- products (FAOL hub) -->
+        <rect class="abox faol" x="308" y="356" width="286" height="96" rx="13" />
+        <text class="a-name" x="326" y="386">products</text>
+        <text class="a-tag faol" x="326" y="404">FAOL · QURILGAN</text>
+        <text class="a-tbl" x="326" y="424">Product · ProductImage</text>
+        <text class="a-tbl" x="326" y="440">Category · Brand · Banner</text>
+        <!-- delivery -->
+        <rect class="abox bp" x="640" y="356" width="200" height="80" rx="12" />
+        <text class="a-name" x="658" y="387">delivery</text>
+        <text class="a-tag bp" x="658" y="405">BLUEPRINT</text>
+        <text class="a-tbl" x="658" y="423">Region · DeliveryZone</text>
+      </svg>
+    </div>
+    <p class="map-cap">products — poydevor: barcha ilovalar unga bog'lanadi. Shuning uchun u birinchi qurilgan.</p>
+
+    <!-- Entity detail, grouped by app -->
+    <div class="sec-head">
+      <h2>Jadvallar tafsiloti</h2>
+      <span class="count">ilova bo'yicha guruhlangan</span>
+    </div>
+    <p class="sec-intro">
+      Har bir maydonning nomi, turi va kaliti ko'rsatilgan. Blueprint kartalari — o'quvchi <b>aynan shu</b>
+      maydonlarni <code style="font-family:var(--mono)">models.py</code> ichida yozadi.
+    </p>
+    <div id="groups"></div>
+
+    <div class="planned-note">
+      <b>Django tizim jadvallari.</b> Yuqoridagilardan tashqari bazada Django standart jadvallari bor:
+      <code>auth_user</code>, <code>auth_group</code>, <code>django_admin_log</code>,
+      <code>django_session</code>, <code>django_migrations</code> — admin va autentifikatsiya uchun.
+    </div>
+
+    <footer>
+      <span>online-shop · Django 5.2 · SQLite</span>
+      <span>products = FAOL · users/cart/orders/delivery = blueprint</span>
+    </footer>
+
+  </div>
+</div>
+
+<script>
+  const K = { PK: 'pk', FK: 'fk', UQ: 'uq', NL: 'nl', XA: 'xa' };
+  const badgeText = { pk: 'PK', fk: 'FK', uq: 'UNIQUE', nl: 'NULL', xa: 'X-APP' };
+
+  const groups = [
+    {
+      app: 'products', uz: 'Katalog', status: 'faol',
+      entities: [
+        { en: 'Banner', tbl: 'products_banner', fields: [
+          { n: 'id', t: 'BigAutoField', keys: [K.PK] },
+          { n: 'title', t: 'varchar(100)' },
+          { n: 'subtitle', t: 'varchar(200)' },
+          { n: 'emoji', t: "varchar(10) · '💄'" },
+          { n: 'gradient', t: 'varchar(200)' },
+          { n: 'link', t: 'varchar(200)' },
+          { n: 'image', t: 'ImageField' },
+          { n: 'order', t: 'PositiveInt · 0' },
+          { n: 'is_active', t: 'boolean · true' },
+          { n: 'created_at', t: 'datetime · auto' },
+        ]},
+        { en: 'Category', tbl: 'products_category', fields: [
+          { n: 'id', t: 'BigAutoField', keys: [K.PK] },
+          { n: 'name', t: 'varchar(100)' },
+          { n: 'slug', t: 'slug(100)', keys: [K.UQ] },
+          { n: 'icon', t: 'varchar(10)' },
+          { n: 'image', t: 'ImageField' },
+          { n: 'order', t: 'PositiveInt · 0' },
+          { n: 'is_active', t: 'boolean · true' },
+        ]},
+        { en: 'Brand', tbl: 'products_brand', fields: [
+          { n: 'id', t: 'BigAutoField', keys: [K.PK] },
+          { n: 'name', t: 'varchar(120)' },
+          { n: 'slug', t: 'slug(120)', keys: [K.UQ] },
+          { n: 'logo', t: 'ImageField' },
+          { n: 'country', t: 'varchar(80)' },
+          { n: 'description', t: 'text' },
+          { n: 'is_featured', t: 'boolean · false' },
+          { n: 'is_active', t: 'boolean · true' },
+          { n: 'order', t: 'PositiveInt · 0' },
+          { n: 'created_at', t: 'datetime · auto' },
+        ]},
+        { en: 'Product', tbl: 'products_product', fields: [
+          { n: 'id', t: 'BigAutoField', keys: [K.PK] },
+          { n: 'name', t: 'varchar(255)' },
+          { n: 'description', t: 'text' },
+          { n: 'price', t: 'decimal(12,0)' },
+          { n: 'old_price', t: 'decimal(12,0)', keys: [K.NL] },
+          { n: 'category_id', t: 'FK → Category', keys: [K.FK], ref: 'products_category.id · PROTECT' },
+          { n: 'brand_id', t: 'FK → Brand', keys: [K.FK, K.NL], ref: 'products_brand.id · PROTECT · null' },
+          { n: 'product_type', t: 'varchar(20) · choices' },
+          { n: 'skin_type', t: 'varchar(20) · choices' },
+          { n: 'volume', t: 'varchar(50)' },
+          { n: 'shade', t: 'varchar(80)' },
+          { n: 'ingredients', t: 'text' },
+          { n: 'shelf_life_months', t: 'PositiveInt', keys: [K.NL] },
+          { n: 'country_of_origin', t: 'varchar(80)' },
+          { n: 'in_stock', t: 'boolean · true' },
+          { n: 'is_featured', t: 'boolean · false' },
+          { n: 'is_active', t: 'boolean · true' },
+          { n: 'created_at', t: 'datetime · auto' },
+          { n: 'updated_at', t: 'datetime · auto' },
+        ]},
+        { en: 'ProductImage', tbl: 'products_productimage', fields: [
+          { n: 'id', t: 'BigAutoField', keys: [K.PK] },
+          { n: 'product_id', t: 'FK → Product', keys: [K.FK], ref: 'products_product.id · CASCADE' },
+          { n: 'image', t: 'ImageField' },
+          { n: 'is_main', t: 'boolean · false' },
+          { n: 'order', t: 'PositiveInt · 0' },
+        ]},
+      ],
+    },
+    {
+      app: 'users', uz: 'Foydalanuvchilar', status: 'bp',
+      entities: [
+        { en: 'TelegramUser', tbl: 'users_telegramuser', fields: [
+          { n: 'id', t: 'BigAutoField', keys: [K.PK] },
+          { n: 'telegram_id', t: 'BigInteger · index', keys: [K.UQ] },
+          { n: 'first_name', t: 'varchar(150)' },
+          { n: 'last_name', t: 'varchar(150)' },
+          { n: 'username', t: 'varchar(150)' },
+          { n: 'phone', t: 'varchar(20)' },
+          { n: 'language', t: 'varchar(2) · uz/ru' },
+          { n: 'is_active', t: 'boolean · true' },
+          { n: 'created_at', t: 'datetime · auto' },
+          { n: 'updated_at', t: 'datetime · auto' },
+        ]},
+        { en: 'Favorite', tbl: 'users_favorite', fields: [
+          { n: 'id', t: 'BigAutoField', keys: [K.PK] },
+          { n: 'user_id', t: 'FK → TelegramUser', keys: [K.FK], ref: 'users_telegramuser.id · CASCADE' },
+          { n: 'product_id', t: 'FK → Product', keys: [K.FK, K.XA], ref: 'products_product.id · CASCADE', xa: true },
+          { n: 'created_at', t: 'datetime · auto' },
+          { n: '⚷ unique', t: 'unique_together', note: '(user, product) — bir mahsulot bir marta' },
+        ]},
+      ],
+    },
+    {
+      app: 'cart', uz: 'Savat', status: 'bp',
+      entities: [
+        { en: 'Cart', tbl: 'cart_cart', fields: [
+          { n: 'id', t: 'BigAutoField', keys: [K.PK] },
+          { n: 'user_id', t: 'O2O → TelegramUser', keys: [K.FK, K.UQ], ref: 'users_telegramuser.id · CASCADE · one-to-one' },
+          { n: 'created_at', t: 'datetime · auto' },
+          { n: 'updated_at', t: 'datetime · auto' },
+        ]},
+        { en: 'CartItem', tbl: 'cart_cartitem', fields: [
+          { n: 'id', t: 'BigAutoField', keys: [K.PK] },
+          { n: 'cart_id', t: 'FK → Cart', keys: [K.FK], ref: 'cart_cart.id · CASCADE' },
+          { n: 'product_id', t: 'FK → Product', keys: [K.FK, K.XA], ref: 'products_product.id · CASCADE', xa: true },
+          { n: 'quantity', t: 'PositiveInt · 1', note: 'validator: max 99' },
+          { n: 'size', t: 'varchar(50)' },
+          { n: '⚷ unique', t: 'unique_together', note: '(cart, product, size)' },
+        ]},
+      ],
+    },
+    {
+      app: 'orders', uz: 'Buyurtmalar', status: 'bp',
+      entities: [
+        { en: 'Order', tbl: 'orders_order', fields: [
+          { n: 'id', t: 'BigAutoField', keys: [K.PK] },
+          { n: 'user_id', t: 'FK → TelegramUser', keys: [K.FK], ref: 'users_telegramuser.id · PROTECT' },
+          { n: 'status', t: 'varchar(20) · 6 choices', note: 'pending → confirmed → … → delivered' },
+          { n: 'total', t: 'decimal(12,0) · 0' },
+          { n: 'delivery_zone_id', t: 'FK → DeliveryZone', keys: [K.FK, K.XA, K.NL], ref: 'delivery_deliveryzone.id · PROTECT · null', xa: true },
+          { n: 'delivery_fee', t: 'decimal(12,0) · 0' },
+          { n: 'payment_method', t: 'varchar(20) · cash/transfer' },
+          { n: 'is_paid', t: 'boolean · false' },
+          { n: 'phone', t: 'varchar(20)' },
+          { n: 'delivery_address', t: 'text' },
+          { n: 'comment', t: 'text' },
+          { n: 'created_at', t: 'datetime · auto' },
+          { n: 'updated_at', t: 'datetime · auto' },
+        ]},
+        { en: 'OrderItem', tbl: 'orders_orderitem', fields: [
+          { n: 'id', t: 'BigAutoField', keys: [K.PK] },
+          { n: 'order_id', t: 'FK → Order', keys: [K.FK], ref: 'orders_order.id · CASCADE' },
+          { n: 'product_id', t: 'FK → Product', keys: [K.FK, K.XA], ref: 'products_product.id · PROTECT', xa: true },
+          { n: 'quantity', t: 'PositiveInt · 1', note: 'validator: max 99' },
+          { n: 'price', t: 'decimal(12,0)', note: 'snapshot: buyurtma paytidagi narx' },
+          { n: 'size', t: 'varchar(50)' },
+        ]},
+      ],
+    },
+    {
+      app: 'delivery', uz: 'Yetkazish', status: 'bp',
+      entities: [
+        { en: 'Region', tbl: 'delivery_region', fields: [
+          { n: 'id', t: 'BigAutoField', keys: [K.PK] },
+          { n: 'name', t: 'varchar(100)', keys: [K.UQ] },
+          { n: 'is_active', t: 'boolean · true' },
+          { n: 'ordering', t: 'PositiveInt · 0' },
+        ]},
+        { en: 'DeliveryZone', tbl: 'delivery_deliveryzone', fields: [
+          { n: 'id', t: 'BigAutoField', keys: [K.PK] },
+          { n: 'region_id', t: 'FK → Region', keys: [K.FK], ref: 'delivery_region.id · CASCADE' },
+          { n: 'name', t: 'varchar(100)' },
+          { n: 'fee', t: 'decimal(12,0) · 0' },
+          { n: 'free_threshold', t: 'decimal(12,0) · 0', note: 'shu summadan oshsa — bepul' },
+          { n: 'estimated_days', t: 'varchar(50)' },
+          { n: 'is_active', t: 'boolean · true' },
+          { n: 'ordering', t: 'PositiveInt · 0' },
+          { n: '⚷ unique', t: 'unique_together', note: '(region, name)' },
+        ]},
+      ],
+    },
+  ];
+
+  function fieldRow(f) {
+    const keys = f.keys || [];
+    const isKey = keys.some(k => k === 'pk' || k === 'fk');
+    const badges = keys.map(k => `<span class="badge ${k}">${badgeText[k]}</span>`).join('');
+    const ref = f.ref ? `<span class="ref${f.xa ? ' xa' : ''}">↳ ${f.ref}</span>` : '';
+    const note = f.note ? `<span class="note">${f.note}</span>` : '';
+    return `
+      <div class="field${isKey ? ' is-key' : ''}">
+        <div>
+          <span class="fname${isKey ? ' key' : ''}">${f.n}</span>
+          ${ref}${note}
+        </div>
+        <div class="right">
+          <span class="ftype">${f.t}</span>
+          ${badges ? `<span class="keys">${badges}</span>` : ''}
+        </div>
+      </div>`;
+  }
+
+  function entityCard(e, status) {
+    const tag = status === 'faol'
+      ? '<span class="tag faol">faol</span>'
+      : '<span class="tag bp">yoziladi</span>';
+    return `
+      <div class="entity${status === 'bp' ? ' bp' : ''}">
+        <div class="entity-head">
+          <div class="titles">
+            <span class="en">${e.en}</span>
+            <span class="tbl">${e.tbl}</span>
+          </div>
+          ${tag}
+        </div>
+        <div class="fields">${e.fields.map(fieldRow).join('')}</div>
+      </div>`;
+  }
+
+  document.getElementById('groups').innerHTML = groups.map(g => {
+    const pill = g.status === 'faol'
+      ? `<span class="status-pill faol"><span class="sd"></span>FAOL · ${g.entities.length} jadval</span>`
+      : `<span class="status-pill bp"><span class="sd"></span>BLUEPRINT · ${g.entities.length} jadval · yoziladi</span>`;
+    return `
+      <div class="app-group">
+        <div class="app-group-head">
+          <div class="agh-left"><span class="agh-name">${g.app}</span><span class="agh-uz">${g.uz}</span></div>
+          ${pill}
+        </div>
+        <div class="grid">${g.entities.map(e => entityCard(e, g.status)).join('')}</div>
+      </div>`;
+  }).join('');
+</script>
