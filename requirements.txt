@@ -3,6 +3,7 @@ Django>=5.0,<6.0
 djangorestframework>=3.14,<4.0
 django-cors-headers>=4.3,<5.0
 django-filter>=23.5,<24.0
+drf-spectacular
 
 # Media & Files
 Pillow>=10.2,<11.0

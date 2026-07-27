@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.validators import ValidationError
 from .models import Banner, Category, Brand
 
 
@@ -36,6 +37,27 @@ class CategorySerializer(serializers.ModelSerializer):
             'order'
         ]
 
+
+class AddCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = [
+            'name', 
+            'slug',
+            'icon',
+            'image',
+            'order'
+        ]
+
+    def validate_name(self, value):
+        if 'mol' in value:
+            raise ValidationError(f"{value} so'zini ishlatib bo'lmaydi")
+        return value
+    
+    def validate_order(self, value):
+        if value < 0:
+            raise ValidationError("Order o dan kichik bo'lishi mumkin emas")
+        return value
 
 class BrandSerializer(serializers.ModelSerializer):
     logo = serializers.SerializerMethodField()
