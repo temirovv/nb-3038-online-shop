@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.validators import ValidationError
-from .models import Banner, Category, Brand
+from .models import Banner, Category, Brand, Product, ProductImage
 
 
 class BannerSerializer(serializers.ModelSerializer):
@@ -83,3 +83,37 @@ class BrandSerializer(serializers.ModelSerializer):
         if request:
             return request.build_absolute_uri(obj.logo.url)
         return obj.logo.url
+
+
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductImage
+        fields = ['image', 'is_main', 'order']
+
+
+class Productserializer(serializers.ModelSerializer):
+    discount_percent = serializers.IntegerField(read_only=True)
+    main_image = serializers.CharField(read_only=True)
+    images = ProductImageSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Product
+        fields = [
+            'id', 
+            'name', 
+            'description', 
+            'price', 
+            'old_price', 
+            'category', 
+            'brand', 
+            'product_type',
+            'skin_type',
+            'volume',
+            'shade',
+            'ingredients',
+            'shelf_life_months',
+            'country_of_origin',
+            'discount_percent',
+            'main_image',
+            'images'
+            ]

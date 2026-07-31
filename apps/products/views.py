@@ -3,11 +3,13 @@ from rest_framework.permissions import AllowAny
 from django.db.models import Count
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework import filters
 
-from .models import Banner, Category, Brand
+from .models import Banner, Category, Brand, Product
 from .serializers import (
     BannerSerializer, CategorySerializer, 
-    BrandSerializer, AddCategorySerializer)
+    BrandSerializer, AddCategorySerializer,
+    Productserializer)
 
 
 class BannerModelViewSet(ReadOnlyModelViewSet):
@@ -43,3 +45,24 @@ class BrandReadOnlyModelViewSet(ReadOnlyModelViewSet):
         queryset = self.get_queryset().filter(is_featured=True)
         serializer = self.get_serializer(queryset, many=True)
         return Response(data=serializer.data)
+
+
+class ProductReadOnlyModelViewSet(ReadOnlyModelViewSet):
+    queryset = (
+        Product.objects.filter(is_active=True)
+        .select_related("category", "brand")
+        .prefetch_related("images")
+    )
+    # N+1 problem solve
+    serializer_class = Productserializer
+    permission_classes = [AllowAny]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    ordering_fields = ['-created_at']
+    search_fields = ['name', 'brand__name']
+
+
+    @action(detail=False, methods=['get'])
+    def featured(self, request):
+        queryset = self.get_queryset().filter(is_featured=True)
+        s = self.get_serializer(queryset, many=True)
+        return Response(s.data)
